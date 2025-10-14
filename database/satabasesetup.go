@@ -38,9 +38,11 @@ func InitDB() *mongo.Client {
 var Client *mongo.Client = InitDB()
 
 func UserData(client *mongo.Client, collectionName string) *mongo.Collection {
-
+	var collections *mongo.Collection = client.Database("E-Commerce").Collection(collectionName)
+	return collections
 }
 
 func ProdcutData(client *mongo.Client, collectionName string) *mongo.Collection {
-
+	var productCollection *mongo.Collection = client.Database("E-Commerce").Collection(collectionName)
+	return productCollection
 }
