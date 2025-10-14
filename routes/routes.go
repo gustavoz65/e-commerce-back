@@ -5,7 +5,7 @@ import (
 	"github.com/gustavoz65/e-commerce-back/controllers"
 )
 
-func UserRoutes(incomingRoutes *gin.Enginer) {
+func UserRoutes(incomingRoutes *gin.Engine) {
 	incomingRoutes.POST("/users/singup", controllers.Singup())
 	incomingRoutes.POST("/users/login", controllers.Login())
 	incomingRoutes.POST("/admin/addproduct", controllers.ProductViewAdmin())
