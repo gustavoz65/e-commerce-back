@@ -141,5 +141,6 @@ func (app *Application) InstantBuy() gin.HandlerFunc {
 			return
 		}
 		c.IndentedJSON(http.StatusOK, gin.H{"message": "success"})
+		c
 	}
 }
