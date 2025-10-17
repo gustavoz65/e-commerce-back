@@ -1,4 +1,4 @@
-package controllers
+package database
 
 import "errors"
 
@@ -12,7 +12,7 @@ var (
 	ErrCantBuyCartItem    = errors.New("error to buy cart item")
 )
 
-func AddroductCart() {
+func AddroductToCart() {
 
 }
 
