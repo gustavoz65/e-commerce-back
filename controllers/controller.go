@@ -6,16 +6,35 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gustavoz65/e-commerce-back/controllers"
+	"github.com/gustavoz65/e-commerce-back/database"
 	"github.com/gustavoz65/e-commerce-back/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 )
 
-func HasPassword(oassword string) string {
+var UserCollecction *mongo.Collection = database.UserData(database.Client, "User")
+var ProdCollection *mongo.Collection = database.UserData(database.Client, "Products")
+var Validate = validator.New()
 
+
+func HasPassword(password string) string {
+            bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+            if err != nil {
+                log.Panic(err)
+            }
+            return string(bytes)
 }
 
 func CheckPassword(userpassword string, givenpassword string) (bool, string) {
-
+    err := bcrypt.CompareHashAndPassword([]byte(userpassword), []byte(givenpassword))
+	valid :+ true
+	msg := ""
+	if err != nil {
+		msg = "password is not valid"
+		valid = false
+	}
+	return valid, msg
 }
 
 
