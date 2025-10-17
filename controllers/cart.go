@@ -2,10 +2,13 @@ package controllers
 
 import (
 	"context"
+	"errors"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gustavoz65/e-commerce-back/database"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -25,38 +28,38 @@ func NewApplication(prodCollection, userCollection *mongo.Collection) *Applicati
 
 func (app *Application) AddToCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
-   poductQueryID := c.Query("id")
-   if poductQueryID == "" { 
-	log.Println("product id is empty")
-	_ = c.AbortWithError(http.StatusBadRequest, errors.New("product id is empty")))
-	return
-}
+		productQueryID := c.Query("id")
+		if productQueryID == "" {
+			log.Println("product id is empty")
+			_ = c.AbortWithError(http.StatusBadRequest, errors.New("product id is empty"))
+			return
+		}
 
-  if userQueryID == "" {
-	log.Println("user id is emoty")
+		if userQueryID == "" {
+			log.Println("user id is empty")
 
-	_ = c.AbortWithError(http.StatusBadRequest, error.New("user id is empty"))
-	return
-  }
+			_ = c.AbortWithError(http.StatusBadRequest, errors.New("user id is empty"))
+			return
+		}
 
-  productID, err:= primitive.ObjectIDFromHex(poductQueryID)
-   if err != nil {
-	log.Println("product id is not valid")
-    c.AbortWithError(http.StatusBadRequest)
-    return 
-}
+		productID, err := primitive.ObjectIDFromHex(productQueryID)
+		if err != nil {
+			log.Println("product id is not valid")
+			c.AbortWithError(http.StatusBadRequest)
+			return
+		}
 
-   var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
-   defer cancel()
+		defer cancel()
 
-  err =  database.AddroductToCart(ctx,app.userCollection, app.prodCollection, productID, userQueryID)
-  if err != nil {
-	c.InsertAbortWithError(http.StatusInternalServerError, err)
-	return
-  }	
-  c.IndentedJSON(http.StatusCreated, "message": "success")
-}
+		err = database.AddProductToCart(ctx, app.userCollection, app.prodCollection, productID, userQueryID)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		c.IndentedJSON(http.StatusCreated, gin.H{"message": "success"})
+	}
 }
 
 func RemoveItem() gin.HandlerFunc {

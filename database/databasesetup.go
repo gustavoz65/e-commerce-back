@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
@@ -15,7 +16,7 @@ func InitDB() *mongo.Client {
 		log.Fatal(err)
 	}
 
-	ctx, cancel := context.WithTimeOut(context.Backgroud(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 	defer cancel()
 
@@ -26,7 +27,7 @@ func InitDB() *mongo.Client {
 
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
-		log.Println("falied to ping database: \t", err)
+		log.Println("failed to ping database:\t", err)
 	}
 
 	fmt.Println("Successfully connected to MongoDB!")
@@ -42,7 +43,7 @@ func UserData(client *mongo.Client, collectionName string) *mongo.Collection {
 	return collections
 }
 
-func ProdcutData(client *mongo.Client, collectionName string) *mongo.Collection {
+func ProductData(client *mongo.Client, collectionName string) *mongo.Collection {
 	var productCollection *mongo.Collection = client.Database("E-Commerce").Collection(collectionName)
 	return productCollection
 }

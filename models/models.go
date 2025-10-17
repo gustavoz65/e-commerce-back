@@ -23,12 +23,12 @@ type User struct {
 	Order_Status    []Order            `json:"orders" bson:"orders"`
 }
 
-type Ptoduct struct {
-	Product_ID   primitive.ObjectID `bson:"_id"`
-	Product_Name *string            `json:"product_name"`
-	Price        *uint64            `json:"price"`
-	Rating       *uint8             `json:"rating"`
-	Image        *string            `json:"image"`
+type Product struct {
+    Product_ID   primitive.ObjectID `bson:"_id"`
+    Product_Name *string            `json:"product_name"`
+    Price        *uint64            `json:"price"`
+    Rating       *uint8             `json:"rating"`
+    Image        *string            `json:"image"`
 }
 
 type ProductUser struct {
@@ -48,12 +48,12 @@ type Address struct {
 }
 
 type Order struct {
-	Order_ID       primitive.ObjectID `bson:"_id"`
-	Order_Cart     []ProductUser      `json:"order_list" bson:"order_list"`
-	Ordeted_At     time.Time          `json:"ordered_at" bson:"ordered_at"`
-	Price          int                `json:"total_price" bson:"total_price"`
-	Discount       *int               `json:"discount" bson:"discount"`
-	Payment_Method Payment            `json:"payment_method" bson:"payment_method"`
+    Order_ID       primitive.ObjectID `bson:"_id"`
+    Order_Cart     []ProductUser      `json:"order_list" bson:"order_list"`
+    Ordered_At     time.Time          `json:"ordered_at" bson:"ordered_at"`
+    Price          int                `json:"total_price" bson:"total_price"`
+    Discount       *int               `json:"discount" bson:"discount"`
+    Payment_Method Payment            `json:"payment_method" bson:"payment_method"`
 }
 
 type Payment struct {

@@ -19,21 +19,21 @@ func CheckPassword(userpassword string, givenpassword string) (bool, string) {
 }
 
 
-func Singup() gin.HandlerFunc {
+func Signup() gin.HandlerFunc {
   return func(c * gin.Context) {
-	 var ctx, cancel = context.WhithTimeout(context.Background(), 100*time.Second)
+	 var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 	 defer cancel()
 
 	 var user models.User
 
 	 c.BindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H("error": err.Error()))
+	 c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	 }
 
-	 validationErr := Validade.Struct(user)
+	 validationErr := Validate.Struct(user)
 	 if validationErr := nil {
-		c.JSON(http.StatusBadRequest, ginH("error": validationErr))
+		c.JSON(http.StatusBadRequest, gin.H{"error": validationErr})
 		return
 	 }
 
@@ -45,7 +45,7 @@ func Singup() gin.HandlerFunc {
 	 }
 
 	 if count > 0 {
-		c.JSON(http.SatatusBadRequest, gin.H("error": "email already exists"))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "email already exists"})
 	 }
 
 	 count, err := UserCollection.CountDocuments(ctx, bson.M("phone":user.Phone))
@@ -64,14 +64,14 @@ func Singup() gin.HandlerFunc {
 
     user.Password = &password
 
-	user.Created_At,_ = time.Parse(Time.RFC3339, time.Now().Format(time.RFC3339))
+	 user.Created_At,_ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.Updated_At, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.ID = primitive.NewObjectID()
 	user.User_ID = user.ID.Hex()
     token, refreshtoken, _ := GenerateAllTokens(*user.Email,*user.First_Name,*user.Last_Name,user.User_ID)
 	user.Token = &token
 	user.Refresh_Token = &refreshtoken
-	user.Usercart = make([]models.ProductUser{}, 0)
+	 user.UserCart = make([]models.ProductUser{}, 0)
 	user.Address_Details = make([]models.Address, 0)
 	user.Order_Status = make([]models.Order, 0)
 	_, insertErr := UserCollection.InsertOne(ctx, user)
@@ -82,7 +82,7 @@ func Singup() gin.HandlerFunc {
 	defer conect()
 
    
-	c.Json(hhtp.StatusCreated, "message": "success")
+	c.JSON(http.StatusCreated, gin.H{"message": "success"})
   }
 }
 
@@ -102,7 +102,7 @@ func Login() gin.HandlerFunc {
  defer cancel()
 
  if err != nil {
-	c.JSON(http.StatusInternalServerError, gin.H("error": "ëmail or password is incorrect"))
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "email or password is incorrect"})
 	return
  }
 
@@ -110,17 +110,17 @@ func Login() gin.HandlerFunc {
  defer cancel()
  
  if !passwordIsValid {
-	c.JSON(http.StatusInternalServerError, gin.H("error": msg))
-	fmt.Prtinln(msg)
+	c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+	fmt.Println(msg)
 	return
  }
 
  token, refrashtoken, _ := GenerateAllTokens(*founduser.Email, *founduser.First_Name, *founduser.Last_Name, founduser.User_ID)
  defer cancel()
 
- gnerate.UpdateAllTokens(token, refrashtoken founduser.User_ID)
+ generate.UpdateAllTokens(token, refrashtoken, founduser.User_ID)
 
- .JSON(http.SatusFound, founduser)
+ .JSON(http.StatusFound, founduser)
 }
 }
 
@@ -128,10 +128,10 @@ func ProductViewAdmin() gin.HandlerFunc {
 
 }
 
-func Searchproduct() gin.HandlerFunc {
+func SearchProduct() gin.HandlerFunc {
 
 }
 
-func SearchproductByQuery() gin.HandlerFunc {
+func SearchProductByQuery() gin.HandlerFunc {
 
 }

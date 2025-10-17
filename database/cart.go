@@ -3,23 +3,23 @@ package database
 import "errors"
 
 var (
-	ErrCantFindProduct    = errors.New("product not found")
-	ErrCantDecodeProducts = errors.New("error to decode products")
-	ErrUserIdNotValid     = errors.New("user id not valid")
-	ErrCantUpdateUser     = errors.New("error to update user")
-	ErrCantRemoveItemCart = errors.New("error to remove item cart")
-	ErrCantGetItemCart    = errors.New("error to get item cart")
-	ErrCantBuyCartItem    = errors.New("error to buy cart item")
+    ErrCantFindProduct    = errors.New("product not found")
+    ErrCantDecodeProducts = errors.New("error decoding products")
+    ErrUserIdNotValid     = errors.New("user id is not valid")
+    ErrCantUpdateUser     = errors.New("error updating user")
+    ErrCantRemoveItemCart = errors.New("error removing item from cart")
+    ErrCantGetItemCart    = errors.New("error getting item from cart")
+    ErrCantBuyCartItem    = errors.New("error buying cart item")
 )
 
-func AddroductToCart() {
+func AddProductToCart() {
 
 }
 
-func RemoveCartIten() {
+func RemoveCartItem() {
 
 }
-func BuyItenFromCart() {
+func BuyItemFromCart() {
 
 }
 func InstantBuy() {
