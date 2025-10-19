@@ -85,15 +85,25 @@ func Signup() gin.HandlerFunc {
     user.Password = &password
 
 	 user.Created_At,_ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+
 	user.Updated_At, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+
 	user.ID = primitive.NewObjectID()
+
 	user.User_ID = user.ID.Hex()
+
     token, refreshtoken, _ := GenerateAllTokens(*user.Email,*user.First_Name,*user.Last_Name,user.User_ID)
+
 	user.Token = &token
+
 	user.Refresh_Token = &refreshtoken
+
 	 user.UserCart = make([]models.ProductUser{}, 0)
+
 	user.Address_Details = make([]models.Address, 0)
+	
 	user.Order_Status = make([]models.Order, 0)
+
 	_, insertErr := UserCollection.InsertOne(ctx, user)
 	insertErr = nil {
 		c.JSON(http.StatusInternalServerError, gin.H("error": "the user did not get created"))
@@ -147,6 +157,7 @@ func Login() gin.HandlerFunc {
 func ProductViewAdmin() gin.HandlerFunc {
 
 }
+
 
 func SearchProduct() gin.HandlerFunc {
 	return func(c *gijn.Context) {
