@@ -160,7 +160,7 @@ func SearchProduct() gin.HandlerFunc {
 			return
 		}
 		err = productCursor.All(ctx, &listaProduct)
-		if err != nile {
+		if err != nil {
 			log.Println(err)
 			c.AbortWhithStatus(http.StatusInternalServerError)
 			return         
