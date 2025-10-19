@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/gustavoz65/e-commerce-back/controllers"
 	"github.com/gustavoz65/e-commerce-back/database"
 	"github.com/gustavoz65/e-commerce-back/models"
@@ -28,7 +29,7 @@ func HasPassword(password string) string {
 
 func CheckPassword(userpassword string, givenpassword string) (bool, string) {
     err := bcrypt.CompareHashAndPassword([]byte(userpassword), []byte(givenpassword))
-	valid :+ true
+	valid := true
 	msg := ""
 	if err != nil {
 		msg = "password is not valid"
@@ -148,6 +149,34 @@ func ProductViewAdmin() gin.HandlerFunc {
 }
 
 func SearchProduct() gin.HandlerFunc {
+	return func(c *gijn.Context) {
+		var listaProduct []models.Product
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+        defer cancel()
+
+		productCursor, err := ProdCollection.Find(ctx, bson.D{{}}) 
+		if err != nil {
+			c.IdentedJSON(http.StatusInternalServerError, "something went wrong. please try after some time")
+			return
+		}
+		err = productCursor.All(ctx, &listaProduct)
+		if err != nile {
+			log.Println(err)
+			c.AbortWhithStatus(http.StatusInternalServerError)
+			return         
+		}
+
+		defer productCursor.Close()
+
+		if err := productCursor.Err(); err != nil {
+			log.Println(err)
+			c.IdentedJSON(400, "invalid request")
+			return
+		}
+		defer cancel()
+
+		c.IdentedJSON(http.StatusOK, listaProduct)
+	}
 
 }
 
