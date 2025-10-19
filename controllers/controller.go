@@ -101,7 +101,7 @@ func Signup() gin.HandlerFunc {
 	 user.UserCart = make([]models.ProductUser{}, 0)
 
 	user.Address_Details = make([]models.Address, 0)
-	
+
 	user.Order_Status = make([]models.Order, 0)
 
 	_, insertErr := UserCollection.InsertOne(ctx, user)
@@ -155,14 +155,33 @@ func Login() gin.HandlerFunc {
 }
 
 func ProductViewAdmin() gin.HandlerFunc {
+	return func (c *gin.Context) {
+       var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	   defer cancel()
 
+	   var product models.Product
+
+	   if err := c.BindJSON(&product); err != nil {
+		c.JSON(hhtp.StatusBadRequest, gin.H("error": err.Error()))
+	   }
+	   product.Product_ID  = primitive.NewObjectID("_id")
+	   _, insertErr := ProdCollection.InsertOne(ctx, product)
+	   if insertErr := nil {
+		c.JSON(http.StatusInternalServerError, gin.H("error": "product not added"))
+		return
+	   }
+	   defer cancel()
+
+	   c.JSON(http.StatusOK, "product added successfully")
+	}
 }
 
 
 func SearchProduct() gin.HandlerFunc {
 	return func(c *gijn.Context) {
 		var listaProduct []models.Product
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		
+		
         defer cancel()
 
 		productCursor, err := ProdCollection.Find(ctx, bson.D{{}}) 
