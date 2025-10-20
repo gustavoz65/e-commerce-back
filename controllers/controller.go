@@ -21,7 +21,7 @@ var UserCollection *mongo.Collection = database.UserData(database.Client, "User"
 var ProdCollection *mongo.Collection = database.UserData(database.Client, "Products")
 var Validate = validator.New()
 
-func HasPassword(password string) string {
+func HashPassword(password string) string {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		log.Panic(err)
@@ -90,7 +90,7 @@ func Signup() gin.HandlerFunc {
 		user.ID = primitive.NewObjectID()
 		user.User_ID = user.ID.Hex()
 
-		token, refreshtoken, _ := GenerateAllTokens(*user.Email, *user.First_Name, *user.Last_Name, user.User_ID)
+		token, refreshtoken, _ := generate.TokenGenerator(*user.Email, *user.First_Name, *user.Last_Name, user.User_ID)
 		user.Token = &token
 		user.Refresh_Token = &refreshtoken
 
