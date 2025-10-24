@@ -9,6 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gustavoz65/e-commerce-back/database"
+	"github.com/gustavoz65/e-commerce-back/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -100,8 +102,51 @@ func (app *Application) RemoveItem() gin.HandlerFunc {
 	}
 }
 
-func GetItemFromCart() gin.HandlerFunc {
+func (app *Application) GetItemFromCart() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user_id := c.Query("id")
+		if user_id == "" {
+			c.Header("Content-Type", "application/json")
+			c.JSON(http.StatusNotFound, gin.H{"message": "user id is missing"})
+			return
+		}
 
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		defer cancel()
+
+		var fildCart models.User
+
+		err := app.userCollection.FindOne(ctx, bson.D{primitive.E{Key: "_id", Value: user_id}}).Decode(&fildCart)
+		if err != nil {
+			log.Println(err)
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "something went wrong. please try after some time"})
+			return
+		}
+
+		filter_match := bson.D{{Key: "$match", Value: bson.D{primitive.E{Key: "_id", Value: user_id}}}}
+		unwind := bson.D{{Key: "$unwind", Value: bson.D{primitive.E{Key: "path", Value: "$usercart"}}}}
+
+		group := bson.D{{Key: "$group", Value: bson.D{primitive.E{Key: "_id", Value: "$_id"},
+			{Key: "total", Value: bson.D{primitive.E{Key: "$sum", Value: "$usercart.price"}}},
+			primitive.E{Key: "usercart", Value: bson.D{primitive.E{Key: "$push", Value: "$usercart"}}}}}}
+
+		project := bson.D{{Key: "$project", Value: bson.D{primitive.E{Key: "_id", Value: "$_id"},
+			primitive.E{Key: "usercart", Value: "$usercart"}}}}
+
+		cursor, err := app.userCollection.Aggregate(ctx, mongo.Pipeline{filter_match, unwind, group, project})
+		if err != nil {
+			log.Println(err)
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "something went wrong. please try after some time"})
+			return
+		}
+		var cartItems []bson.M
+		if err = cursor.All(ctx, &cartItems); err != nil {
+			log.Println(err)
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "something went wrong. please try after some time"})
+			return
+		}
+		c.IndentedJSON(http.StatusOK, cartItems)
+	}
 }
 
 func (app *Application) BuyFromCart() gin.HandlerFunc {
