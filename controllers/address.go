@@ -47,7 +47,6 @@ func EditWorkAddress() gin.HandlerFunc {
 		
 		filter := bson.D{{Key: "_id", Value: userID}}
 
-		
 		update := bson.D{
 			{Key: "$set", Value: bson.D{
 				{Key: "address.$[i].house_name", Value: address.House},
