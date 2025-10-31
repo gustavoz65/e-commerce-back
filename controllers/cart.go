@@ -48,7 +48,7 @@ func (app *Application) AddToCart() gin.HandlerFunc {
 		productID, err := primitive.ObjectIDFromHex(productQueryID)
 		if err != nil {
 			log.Println("product id is not valid")
-			_ = c.AbortWithError(http.StatusBadRequest)
+			_ = c.AbortWithError(http.StatusBadRequest, errors.New("invalid product id"))
 			return
 		}
 
@@ -85,7 +85,7 @@ func (app *Application) RemoveItem() gin.HandlerFunc {
 		productID, err := primitive.ObjectIDFromHex(productQueryID)
 		if err != nil {
 			log.Println("product id is not empty")
-			_ = c.AbortWithError(http.StatusBadRequest)
+			_ = c.AbortWithError(http.StatusBadRequest, errors.New("product id is invalid"))
 			return
 		}
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
